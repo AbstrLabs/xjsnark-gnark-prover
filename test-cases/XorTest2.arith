@@ -1,0 +1,39 @@
+total 70
+input 0
+input 1
+input 2
+input 3
+input 4
+nizkinput 5
+const-mul-0 in 0 out 6
+split in 1 out 7_8_9_10_11_12_13_14
+split in 2 out 15_16_17_18_19_20_21_22
+const-mul-3 in 0 out 23
+const-mul-5 in 0 out 24
+xor in 7_15 out 25
+xor in 8_16 out 26
+xor in 9_17 out 27
+xor in 10_18 out 28
+xor in 11_19 out 29
+xor in 12_20 out 30
+xor in 13_21 out 31
+xor in 14_22 out 32
+pack in 25_26_27_28_29_30_31_32 out 33
+assert in 33_0 out 3
+split in 5 out 34_35_36_37_38_39_40_41
+const-mul-8 in 1 out 42
+add in 42_5 out 43
+add in 43_0 out 44
+mul in 44_44 out 45
+const-mul-27c01bde5d8d55d9208b14b15817f64c85985a3b888f2ec077c2c094f2db6db8 in 44 out 46
+const-mul-236e02941bbb30b0d4a87c2ec3634544344a93350ffa0dd811b3261574492493 in 45 out 47
+add in 46_47 out 48
+const-mul-neg-1 in 0 out 49
+add in 48_49 out 50
+mul in 50_50 out 51
+assert in 51_0 out 6
+const-mul-63 in 0 out 52
+const-mul-63 in 5 out 53
+split in 53 out 54_55_56_57_58_59_60_61_62_63_64_65_66_67_68
+pack in 54_55_56_57_58_59_60_61 out 69
+assert in 69_0 out 4

@@ -1,0 +1,27 @@
+total 25
+input 0
+input 1
+input 2
+nizkinput 3
+const-mul-0 in 0 out 4
+mul in 1_1 out 5
+add in 5_3 out 6
+mul in 6_6 out 7
+add in 7_3 out 8
+mul in 8_8 out 9
+add in 9_3 out 10
+mul in 10_10 out 11
+add in 11_3 out 12
+mul in 12_12 out 13
+add in 13_3 out 14
+mul in 14_14 out 15
+add in 15_3 out 16
+mul in 16_16 out 17
+add in 17_3 out 18
+mul in 18_18 out 19
+add in 19_3 out 20
+mul in 20_20 out 21
+add in 21_3 out 22
+mul in 22_22 out 23
+add in 23_3 out 24
+assert in 2_0 out 24
