@@ -16,39 +16,158 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Errorf("Usage: prover arith input")
+	if len(os.Args) < 2 {
+		fmt.Errorf("Usage: xjsnark-gnark-prover <command> <args>")
 		os.Exit(1)
 	}
-	log.Print("Start Loading and compiling Xjsnark arith file")
 
-	circuit := newCircuitFromXjsnark(os.Args[1])
+	command := os.Args[1]
+	if command == "compile" {
+		if len(os.Args) < 4 {
+			fmt.Errorf("Usage: xjsnark-gnark-prover compile <xjsnark-arith-file> <output-gnark-circuit-file>")
+			os.Exit(1)
+		}
+		log.Print("Start Loading and compiling Xjsnark arith file")
+		circuit := newCircuitFromXjsnark(os.Args[2])
 
-	r1cs, err := frontend.Compile(ecc.BN254, r1cs.NewBuilder, circuit)
-	if err != nil {
-		panic(err)
+		r1cs, err := frontend.Compile(ecc.BN254, r1cs.NewBuilder, circuit)
+		if err != nil {
+			panic(err)
+		}
+		log.Print("Load and compile Xjsnark arith file done")
+
+		f, err := os.Create(os.Args[3])
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		fmt.Fprintf(f, "%d\n", circuit.outputEnd)
+		r1cs.WriteTo(f)
+	} else if command == "keygen" {
+		if len(os.Args) < 5 {
+			fmt.Errorf("Usage: xjsnark-gnark-prover keygen <gnark-circuit-file> <output-pkey-file> <output-vkey-file>")
+			os.Exit(1)
+		}
+
+		log.Print("Loading circuit start")
+		r1cs := groth16.NewCS(ecc.BN254)
+
+		f, err := os.Open(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		var unused string
+		_, _ = fmt.Fscanf(f, "%s\n", &unused)
+		_, err = r1cs.ReadFrom(f)
+		if err != nil {
+			panic(err)
+		}
+		log.Print("Loading circuit done")
+
+		log.Print("Generating pk and vk done")
+		pk, vk, err := groth16.Setup(r1cs)
+		log.Print("Generate pk and vk done")
+
+		log.Print("Writing pk")
+		fpk, err := os.Create(os.Args[3])
+		if err != nil {
+			panic(err)
+		}
+		defer fpk.Close()
+		pk.WriteRawTo(fpk)
+		log.Print("Writing pk done")
+
+		log.Print("Writing vk")
+		fvk, err := os.Create(os.Args[4])
+		if err != nil {
+			panic(err)
+		}
+		defer fvk.Close()
+		vk.WriteRawTo(fvk)
+		log.Print("Writing vk done")
+	} else if command == "prove" {
+		if len(os.Args) < 6 {
+			fmt.Errorf("Usage: xjsnark-gnark-prover prove <gnark-circuit-file> <pkey-file> <witness> <output-proof>")
+			os.Exit(1)
+		}
+
+		log.Print("Loading circuit start")
+		r1cs := groth16.NewCS(ecc.BN254)
+
+		f, err := os.Open(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		var outputEnd uint
+		_, _ = fmt.Fscanf(f, "%d\n", &outputEnd)
+		_, err = r1cs.ReadFrom(f)
+		if err != nil {
+			panic(err)
+		}
+		log.Print("Loading circuit done")
+
+		log.Print("Loading pk")
+		fpk, err := os.Open(os.Args[3])
+		defer fpk.Close()
+		pk := groth16.NewProvingKey(ecc.BN254)
+		_, err = pk.UnsafeReadFrom(fpk)
+		log.Print("Loading pk done")
+
+		log.Print("Loading witness")
+		assignment := loadAssignment(os.Args[4], r1cs, outputEnd)
+		witness, err := frontend.NewWitness(assignment, ecc.BN254)
+		log.Print("Loading witness done")
+
+		log.Print("Proving")
+		proof, err := groth16.Prove(r1cs, pk, witness)
+		if err != nil {
+			panic(err)
+		}
+		log.Print("Prove done")
+
+		log.Print("Writing proof")
+		ppk, err := os.Create(os.Args[5])
+		if err != nil {
+			panic(err)
+		}
+		defer ppk.Close()
+		proof.WriteTo(ppk)
+		log.Print("Writing proof done")
+	} else if command == "verify" {
+		if len(os.Args) < 5 {
+			fmt.Errorf("Usage: xjsnark-gnark-prover verify <proof> <vk-file> <public-witness>")
+			os.Exit(1)
+		}
+
+		log.Print("Loading proof")
+		fp, err := os.Open(os.Args[3])
+		defer fp.Close()
+		proof := groth16.NewProof(ecc.BN254)
+		proof.ReadFrom(fp)
+		log.Print("Loading proof done")
+
+		log.Print("Loading vk")
+		fvk, err := os.Open(os.Args[3])
+		defer fvk.Close()
+		vk := groth16.NewVerifyingKey(ecc.BN254)
+		_, err = vk.ReadFrom(fvk)
+		log.Print("Loading vk done")
+
+		log.Print("Loading public assignment")
+		assignment := loadPublicAssignment(os.Args[4])
+		witness, err := frontend.NewWitness(assignment, ecc.BN254)
+		log.Print("Loading public assignment done")
+
+		publicWitness, _ := witness.Public()
+
+		err = groth16.Verify(proof, vk, publicWitness)
+		if err != nil {
+			panic(err)
+		}
+		log.Print("Verify done")
 	}
-	log.Print("Load and compile Xjsnark arith file done")
-
-	pk, vk, err := groth16.Setup(r1cs)
-	log.Print("Generate pk and vk done")
-
-	assignment := loadAssignment(os.Args[2], circuit)
-	witness, err := frontend.NewWitness(assignment, ecc.BN254)
-	publicWitness, _ := witness.Public()
-	log.Print("Load witness done")
-
-	proof, err := groth16.Prove(r1cs, pk, witness)
-	if err != nil {
-		panic(err)
-	}
-	log.Print("Prove done")
-
-	err = groth16.Verify(proof, vk, publicWitness)
-	if err != nil {
-		panic(err)
-	}
-	log.Print("Verify done")
 }
 
 type Circuit struct {
@@ -228,16 +347,17 @@ func parseLibsnarkArith(circuit *Circuit, api frontend.API) {
 	}
 }
 
-func loadAssignment(filename string, circuit *Circuit) (ret *Circuit) {
+func loadAssignment(filename string, r1cs frontend.CompiledConstraintSystem, outputEnd uint) (ret *Circuit) {
 	f, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
 
 	ret = new(Circuit)
-	ret.outputEnd = circuit.outputEnd
-	ret.P = make([]frontend.Variable, len(circuit.P))
-	ret.S = make([]frontend.Variable, len(circuit.S))
+	ret.outputEnd = outputEnd
+	_, nSecret, nPublic := r1cs.GetNbVariables()
+	ret.P = make([]frontend.Variable, nPublic-1)
+	ret.S = make([]frontend.Variable, nSecret)
 
 	var id int
 	var hex string
@@ -257,6 +377,32 @@ func loadAssignment(filename string, circuit *Circuit) (ret *Circuit) {
 		} else if id < len(ret.P)+len(ret.S) {
 			ret.S[id-len(ret.P)] = bi
 		}
+	}
+	return
+}
+
+func loadPublicAssignment(filename string) (ret *Circuit) {
+	f, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+
+	ret = new(Circuit)
+	ret.P = make([]frontend.Variable, 0)
+
+	var id int
+	var hex string
+	for {
+		n, _ := fmt.Fscanf(f, "%d %s\n", &id, &hex)
+
+		if n != 2 {
+			break
+		}
+		bi, success := new(big.Int).SetString(hex, 16)
+		if !success {
+			log.Fatal("not a valid hex number")
+		}
+		ret.P = append(ret.P, bi)
 	}
 	return
 }
