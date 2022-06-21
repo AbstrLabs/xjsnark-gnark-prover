@@ -142,7 +142,7 @@ func main() {
 		}
 
 		log.Print("Loading proof")
-		fp, err := os.Open(os.Args[3])
+		fp, err := os.Open(os.Args[2])
 		defer fp.Close()
 		proof := groth16.NewProof(ecc.BN254)
 		proof.ReadFrom(fp)
