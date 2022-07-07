@@ -41,8 +41,10 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
-		fmt.Fprintf(f, "%d\n", circuit.outputEnd)
-		r1cs.WriteTo(f)
+		fWriter := bufio.NewWriter(f)
+		fmt.Fprintf(fWriter, "%d\n", circuit.outputEnd)
+		r1cs.WriteTo(fWriter)
+		log.Print("Write gnark circuit done")
 	} else if command == "keygen" {
 		if len(os.Args) < 5 {
 			fmt.Errorf("Usage: xjsnark-gnark-prover keygen <gnark-circuit-file> <output-pkey-file> <output-vkey-file>")
@@ -57,15 +59,16 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
+		fReader := bufio.NewReader(f)
 		var unused string
 		_, _ = fmt.Fscanf(f, "%s\n", &unused)
-		_, err = r1cs.ReadFrom(f)
+		_, err = r1cs.ReadFrom(fReader)
 		if err != nil {
 			panic(err)
 		}
 		log.Print("Loading circuit done")
 
-		log.Print("Generating pk and vk done")
+		log.Print("Generating pk and vk start")
 		pk, vk, err := groth16.Setup(r1cs)
 		log.Print("Generate pk and vk done")
 
@@ -75,7 +78,8 @@ func main() {
 			panic(err)
 		}
 		defer fpk.Close()
-		pk.WriteRawTo(fpk)
+		fpkwriter := bufio.NewWriter(fpk)
+		pk.WriteRawTo(fpkwriter)
 		log.Print("Writing pk done")
 
 		log.Print("Writing vk")
@@ -100,9 +104,10 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
+		fReader := bufio.NewReader(f)
 		var outputEnd uint
-		_, _ = fmt.Fscanf(f, "%d\n", &outputEnd)
-		_, err = r1cs.ReadFrom(f)
+		_, _ = fmt.Fscanf(fReader, "%d\n", &outputEnd)
+		_, err = r1cs.ReadFrom(fReader)
 		if err != nil {
 			panic(err)
 		}
@@ -111,8 +116,9 @@ func main() {
 		log.Print("Loading pk")
 		fpk, err := os.Open(os.Args[3])
 		defer fpk.Close()
+		fpkReader := bufio.NewReader(fpk)
 		pk := groth16.NewProvingKey(ecc.BN254)
-		_, err = pk.UnsafeReadFrom(fpk)
+		_, err = pk.UnsafeReadFrom(fpkReader)
 		log.Print("Loading pk done")
 
 		log.Print("Loading witness")
@@ -128,12 +134,12 @@ func main() {
 		log.Print("Prove done")
 
 		log.Print("Writing proof")
-		ppk, err := os.Create(os.Args[5])
+		fp, err := os.Create(os.Args[5])
 		if err != nil {
 			panic(err)
 		}
-		defer ppk.Close()
-		proof.WriteTo(ppk)
+		defer fp.Close()
+		proof.WriteTo(fp)
 		log.Print("Writing proof done")
 	} else if command == "verify" {
 		if len(os.Args) < 5 {
