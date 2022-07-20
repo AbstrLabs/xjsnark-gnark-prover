@@ -8,7 +8,7 @@ This repo implements a [gnark](https://github.com/ConsenSys/gnark) backend to co
 go build
 ```
 
-### Use
+## Use
 ```
 ./xjsnark-gnark-prover compile <arith-circuit> <output-gnark-circuit>
 ./xjsnark-gnark-prover keygen <gnark-circuit> <output-pk> <output-vk>
