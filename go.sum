@@ -1,6 +1,6 @@
+github.com/abstrlabs/gnark v0.6.5-0.20220720142728-a18617ccbd82 h1:euYwJFCoULXE7PqG1w65qo77OtrCMqRB2Lo+yAFXta4=
+github.com/abstrlabs/gnark v0.6.5-0.20220720142728-a18617ccbd82/go.mod h1:oQnMurInsfe+9rG4l8qh8AFVihfuRCS5H3XPJH/6HPM=
 github.com/consensys/bavard v0.1.10/go.mod h1:9ItSMtA/dXMAiL7BG6bqW2m3NdSEObYWoH223nGHukI=
-github.com/consensys/gnark v0.7.1 h1:0ZWY9uKhhznRn541ptjdt0XxriOp1ikAubAkHahoJyQ=
-github.com/consensys/gnark v0.7.1/go.mod h1:oQnMurInsfe+9rG4l8qh8AFVihfuRCS5H3XPJH/6HPM=
 github.com/consensys/gnark-crypto v0.7.0 h1:rwdy8+ssmLYRqKp+ryRRgQJl/rCq2uv+n83cOydm5UE=
 github.com/consensys/gnark-crypto v0.7.0/go.mod h1:KPSuJzyxkJA8xZ/+CV47tyqkr9MmpZA3PXivK4VPrVg=
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
@@ -55,8 +55,9 @@ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 h1:OH54vjqzRWmbJ62fjuhxy7AxFFgoHN0/DPc/UrL8cAs=
 golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 h1:0A+M6Uqn+Eje4kHMK80dtF3JCXC4ykBgQG4Fe06QRhQ=
+golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=

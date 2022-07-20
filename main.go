@@ -43,6 +43,7 @@ func main() {
 		defer f.Close()
 		fWriter := bufio.NewWriter(f)
 		fmt.Fprintf(fWriter, "%d\n", circuit.outputEnd)
+		defer fWriter.Flush()
 		r1cs.WriteTo(fWriter)
 		log.Print("Write gnark circuit done")
 	} else if command == "keygen" {
@@ -59,10 +60,10 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
-		fReader := bufio.NewReader(f)
+		// fReader := bufio.NewReader(f)
 		var unused string
 		_, _ = fmt.Fscanf(f, "%s\n", &unused)
-		_, err = r1cs.ReadFrom(fReader)
+		_, err = r1cs.ReadFrom(f)
 		if err != nil {
 			panic(err)
 		}
@@ -104,7 +105,7 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
-		fReader := bufio.NewReader(f)
+		fReader := bufio.NewReaderSize(f, 4096000000)
 		var outputEnd uint
 		_, _ = fmt.Fscanf(fReader, "%d\n", &outputEnd)
 		_, err = r1cs.ReadFrom(fReader)
@@ -362,6 +363,7 @@ func loadAssignment(filename string, r1cs frontend.CompiledConstraintSystem, out
 	ret = new(Circuit)
 	ret.outputEnd = outputEnd
 	_, nSecret, nPublic := r1cs.GetNbVariables()
+	log.Print(nPublic, nSecret)
 	ret.P = make([]frontend.Variable, nPublic-1)
 	ret.S = make([]frontend.Variable, nSecret)
 
