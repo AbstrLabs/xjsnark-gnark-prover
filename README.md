@@ -10,10 +10,11 @@ go build
 
 ### Use
 ```
-./xjsnark-gnark-prover circuit input
+./xjsnark-gnark-prover compile <arith-circuit> <output-gnark-circuit>
+./xjsnark-gnark-prover keygen <gnark-circuit> <output-pk> <output-vk>
+./xjsnark-gnark-prover prove <gnark-circuit> <pk> <input> <output-proof>
+./xjsnark-gnark-prover verify <proof> <vk> <public-input>
 ```
 
-There is a couple of circuit and sample input in `test-cases/`, for example: 
-```
-./xjsnark-gnark-prover test-cases/AES128.arith test-cases/aes128-input.in
-``` 
+
+There is a couple of circuit and sample input in `test-cases/`, for example, for the aes128 circuit, `<arith-circuit>` is `test-cases/AES128.arith` and `<input>` is `test-cases/aes128-input.in`.
