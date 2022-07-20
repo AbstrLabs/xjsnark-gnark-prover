@@ -16,15 +16,17 @@ import (
 )
 
 func main() {
+	stderr := log.New(os.Stderr, "", 0)
+
 	if len(os.Args) < 2 {
-		fmt.Errorf("Usage: xjsnark-gnark-prover <command> <args>")
+		stderr.Println("Usage: xjsnark-gnark-prover <command> <args>")
 		os.Exit(1)
 	}
 
 	command := os.Args[1]
 	if command == "compile" {
 		if len(os.Args) < 4 {
-			fmt.Errorf("Usage: xjsnark-gnark-prover compile <xjsnark-arith-file> <output-gnark-circuit-file>")
+			stderr.Println("Usage: xjsnark-gnark-prover compile <xjsnark-arith-file> <output-gnark-circuit-file>")
 			os.Exit(1)
 		}
 		log.Print("Start Loading and compiling Xjsnark arith file")
@@ -48,7 +50,7 @@ func main() {
 		log.Print("Write gnark circuit done")
 	} else if command == "keygen" {
 		if len(os.Args) < 5 {
-			fmt.Errorf("Usage: xjsnark-gnark-prover keygen <gnark-circuit-file> <output-pkey-file> <output-vkey-file>")
+			stderr.Println("Usage: xjsnark-gnark-prover keygen <gnark-circuit-file> <output-pkey-file> <output-vkey-file>")
 			os.Exit(1)
 		}
 
@@ -93,7 +95,7 @@ func main() {
 		log.Print("Writing vk done")
 	} else if command == "prove" {
 		if len(os.Args) < 6 {
-			fmt.Errorf("Usage: xjsnark-gnark-prover prove <gnark-circuit-file> <pkey-file> <witness> <output-proof>")
+			stderr.Println("Usage: xjsnark-gnark-prover prove <gnark-circuit-file> <pkey-file> <witness> <output-proof>")
 			os.Exit(1)
 		}
 
@@ -144,7 +146,7 @@ func main() {
 		log.Print("Writing proof done")
 	} else if command == "verify" {
 		if len(os.Args) < 5 {
-			fmt.Errorf("Usage: xjsnark-gnark-prover verify <proof> <vk-file> <public-witness>")
+			stderr.Println("Usage: xjsnark-gnark-prover verify <proof> <vk-file> <public-witness>")
 			os.Exit(1)
 		}
 
@@ -174,6 +176,9 @@ func main() {
 			panic(err)
 		}
 		log.Print("Verify done")
+	} else {
+		stderr.Println("Expected one of the following command: compile, keygen, prove, verify")
+		os.Exit(1)
 	}
 }
 
