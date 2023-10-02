@@ -311,7 +311,7 @@ func parseLibsnarkArith(circuit *Circuit, api frontend.API) {
 			} else if t == "xor" {
 				Vars[outValues[0]] = api.Xor(api.IsZero(Vars[inValues[0]]), api.IsZero(Vars[inValues[1]]))
 			} else if t == "or" {
-				Vars[outValues[0]] = api.IsZero(api.And(api.IsZero(Vars[inValues[0]]), api.IsZero(Vars[inValues[1]])))
+				Vars[outValues[0]] = api.Or(api.IsZero(Vars[inValues[0]]), api.IsZero(Vars[inValues[1]]))
 			} else if t == "zerop" {
 				Vars[outValues[1]] = api.Sub(big.NewInt(1), api.IsZero(Vars[inValues[0]]))
 			} else if t == "split" {
